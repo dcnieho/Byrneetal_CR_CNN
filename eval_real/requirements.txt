@@ -1,0 +1,9 @@
+pebble
+numpy
+scipy
+pandas
+matplotlib
+tensorflow==2.11.0
+tensorflow-datasets==4.8.3
+deeptrack==1.5.5
+opencv-contrib-python==4.7.0.72
