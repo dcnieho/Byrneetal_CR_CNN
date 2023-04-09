@@ -46,3 +46,7 @@ MANIFEST
 .idea/
 .vs/
 *.ini
+
+# data files
+*.csv
+*.tsv
