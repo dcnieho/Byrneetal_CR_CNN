@@ -17,9 +17,10 @@ IMAGE_SIZE = 180
 NOISE_SD_RANGE = [0, 30]
 BACKGROUND_LUM_EXP_LOC = 1.
 BACKGROUND_LUM_EXP_SCALE = 10.
+BG_LUMINANCE_RANGE = [.125, .6]
 
 
-def run(gauss_amp, bg_pos):
+def run(gauss_amp, bg_pos, sx):
     from tensorflow import keras
     import deeptrack as dt
     from deeptrack.extras.radialcenter import radialcenter
@@ -75,9 +76,10 @@ def run(gauss_amp, bg_pos):
 
     background = GrayBackground(
         background_pos=lambda: None,
+        background_lum=lambda: None,
         pos=lambda background_pos: background_pos,
         ori=0,
-        lum=255/2,
+        lum=lambda background_lum: background_lum,
         bg_lum=lambda: expon.rvs(loc=BACKGROUND_LUM_EXP_LOC,scale=BACKGROUND_LUM_EXP_SCALE),
         smooth_edge = 1
     )
@@ -107,7 +109,8 @@ def run(gauss_amp, bg_pos):
         'gray_direction': image.get_property("direction"),
         'cr_sigma': image.get_property("cr_sigma"),
         'gauss_amp': image.get_property("gauss_amp"),
-        'noise_sigma': image.get_property("noise_sigma")
+        'noise_sigma': image.get_property("noise_sigma"),
+        'bg_luminance': image.get_property("lum")
         }
         return props
 
@@ -164,7 +167,7 @@ def run(gauss_amp, bg_pos):
     # do eval
     # sim parameters
     noise_levels = np.arange(0, 20, 2)  # Image noise
-    sigmas_x     = np.arange(2, 20, 2)  # Blob size (Standard deviation of gaussian). Gaussian is scaled such that SD is radius of saturated plateau
+    gray_levels  = [.15, .2, .25, .3, .35, .4, .45, .5, .55, .6]
 
     # vertical position
     offset_y = 0.0
@@ -178,14 +181,15 @@ def run(gauss_amp, bg_pos):
                     step)
 
     pos = []
-    for sx in sigmas_x:
-        for noise_level in noise_levels:
-            print(f'bg_pos: {bg_pos}, gauss_amp: {gauss_amp}, plateau radius: {sx}, noise level: {noise_level}')
+    for noise_level in noise_levels:
+        for grl in gray_levels:
+            print(f'bg_pos: {bg_pos}, gauss_amp: {gauss_amp}, plateau radius: {sx}, noise level: {noise_level}, gray level: {grl}')
 
             image_getter = lambda mx: image_pipeline(cr_position=np.array([mx, my]),
                                                      cr_sigma=np.array([sx]),
                                                      gauss_amp=np.array([gauss_amp]),
                                                      background_pos=np.array([mx+(bg_pos-.5)*2*sx, my]),
+                                                     background_lum=np.array([grl*255]),
                                                      noise_sigma=np.array([noise_level]))
             images = [image_getter(mx) for mx in steps]
             props = [get_properties(im) for im in images]
@@ -200,25 +204,26 @@ def run(gauss_amp, bg_pos):
                 for m,method in zip(out[1:],['CNN','radial_symm','cog','thresh']):
                     if method=='CNN':
                         m = measured_positions[k,:]
-                    pos.append([method, bg_pos, gauss_amp, sx, noise_level, ref[0], ref[1], m[0], m[1]])
+                    pos.append([method, bg_pos, gauss_amp, sx, noise_level, grl, ref[0], ref[1], m[0], m[1]])
 
     # store results
-    df = pd.DataFrame(pos, columns = ['method','bg_pos','gauss_amp', 'size', 'noise_level',
+    df = pd.DataFrame(pos, columns = ['method','bg_pos','gauss_amp', 'size', 'noise_level', 'gray_level',
                                       'ref_x', 'ref_y', 'est_x', 'est_y'])
 
     df['err_x'] = np.abs(df['est_x']-df['ref_x'])
     df['err_y'] = np.abs(df['est_y']-df['ref_y'])
 
-    df.to_csv(f'CNN_data_{offset_y}_gaussamp{gauss_amp}_bgpos{bg_pos}.csv',index=False)
+    df.to_csv(f'CNN_data_{offset_y}_gaussamp{gauss_amp}_bgpos{bg_pos}_sx{sx}.csv',index=False)
 
-    return gauss_amp,bg_pos
+    return gauss_amp,bg_pos,sx
 
 
 if __name__ == "__main__":
     import pebble
     gauss_amps   = [10, 50, 200, 1000, 10000]
     bg_pos       = [-10000, -.25, 0, .25, .5, .75, 1., 1.25]    # -10000 for pure black background
+    sigmas_x     = np.arange(2, 20, 2)                          # Blob size (Standard deviation of gaussian). Gaussian is scaled such that SD is radius of saturated plateau
 
     with pebble.ProcessPool(max_workers=2, max_tasks=1) as pool:
-        for result in pool.map(run, *zip(*((a,b) for a in gauss_amps for b in bg_pos))).result():
-            print(f'done with {result[0]}, {result[1]}')
+        for result in pool.map(run, *zip(*((a,b,c) for a in gauss_amps for b in bg_pos for c in sigmas_x))).result():
+            print(f'done with {result[0]}, {result[1]}, {result[2]}')

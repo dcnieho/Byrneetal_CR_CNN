@@ -21,6 +21,8 @@ N.B.: complete details of changes made are available on
 [github](https://github.com/dcnieho/Byrneetal_CR_CNN)
 ### Version 1.0
 - initial release
+### Version 1.1
+- update for article revision
 
 
 

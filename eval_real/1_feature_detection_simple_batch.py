@@ -167,6 +167,8 @@ def do_shit(video_file, result_folder):
                         measured_position_x = measured_positions[i,0]+patch_off[0][0]
                         measured_position_y = measured_positions[i,1]+patch_off[0][1]
                         break
+            if len(cr_features)==0:
+                cr_features = [np.array([np.nan,np.nan,np.nan])]
 
             temp_list = [str(video_file), frame_number,
                             pupil_features['cog'][0],
