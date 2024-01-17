@@ -1,4 +1,4 @@
-This repository contains the simulation and model training code, the trained model and the code for evaluating the model on simulated and real images used and developed for the article _[Byrne, S.A., Nyström, M., Maquiling, V., Kasneci, E., & Niehorster, D.C. (submitted). Precise localization of corneal reflections in eye images using deep learning trained on synthetic data.](url_to_come)_
+This repository contains the simulation and model training code, the trained model and the code for evaluating the model on simulated and real images used and developed for the article [Byrne, S.A., Nyström, M., Maquiling, V., Kasneci, E., & Niehorster, D.C. (2023). Precise localization of corneal reflections in eye images using deep learning trained on synthetic data. _Behavior Research Methods_. doi: 10.3758/s13428-023-02297-w](https://doi.org/10.3758/s13428-023-02297-w)
 
 When using the code or model in this repository in your work, please cite Byrne et al.
 (submitted).
@@ -32,7 +32,7 @@ By downloading this data set, you expressly agree to the following conditions of
 
 ### A. Conditions of Release
 Data are available by permission of the authors. Use of data in publications,
-either digital or hardcopy, must be cited as follows: [Byrne, S.A., Nyström, M., Maquiling, V., Kasneci, E., & Niehorster, D.C. (submitted). Precise localization of corneal reflections in eye images using deep learning trained on synthetic data.](url_to_come).
+either digital or hardcopy, must be cited as follows: [Byrne, S.A., Nyström, M., Maquiling, V., Kasneci, E., & Niehorster, D.C. (2023). Precise localization of corneal reflections in eye images using deep learning trained on synthetic data. _Behavior Research Methods_. doi: 10.3758/s13428-023-02297-w](https://doi.org/10.3758/s13428-023-02297-w).
 
 ### B. Disclaimer of Liability
 The authors shall not be held liable for any improper or incorrect use or application of the data provided, and assume no responsibility for the use or application of the data or interpretations based on the data, or information derived from interpretation of the data. In no event shall the authors be liable for any direct, indirect or incidental damage, injury, loss, harm, illness or other damage or injury arising from the release, use or application of these data. This disclaimer of liability applies to any direct, indirect, incidental, exemplary, special or consequential damages or injury, even if advised of the possibility of such damage or injury, including but not limited to those caused by any failure of performance, error, omission, defect, delay in operation or transmission, computer virus, alteration, use, application, analysis or interpretation of data.
